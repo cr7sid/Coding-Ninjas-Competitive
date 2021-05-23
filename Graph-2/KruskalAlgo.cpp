@@ -1,96 +1,109 @@
-#include <iostream>
 #include<bits/stdc++.h>
 using namespace std;
 
-class edge
-{
+class edge {
     public:
     
-    int s;//source
-    int d;//destination
-    int w;//weight
+    int src;
+    int dest;
+    int weight;
 
     edge(){}
-    edge(int s,int d ,int w)
-    {
-        this->s=s;
-        this->d=d;
-        this->w=w;
+    edge(int src,int dest ,int weight) {
+
+        this->src = src;
+        this->dest = dest;
+        this->weight = weight;
+
     }
 };
 
-bool comp(edge const & a , edge const & b)
-{
-		return a.w < b.w;
+bool compare(edge const & a , edge const & b) {
+
+    return a.weight < b.weight;
+
 }
-int findparent(int * parent ,int v)
-{
-    if(parent[v]==v)
-    return v;
-    
-    return findparent(parent,parent[v]);
-}
-void kruskalMST(edge * input, int v , int e)
-{//sort in ascending order on basis of weights of edges
-    sort(input,input+e, comp);
-    
-    int* parent =new int[v];
-    for(int i=0 ;i <v ;i++)
-    {
-        parent[i]=i;
+
+int findParent(int* parent, int vertex) {
+
+    if(parent[vertex] == vertex) {
+
+        return vertex;
+
     }
-    
-    edge *output=new edge[v-1];
-    int count=0;
-    int i=0;
-    while(count!=v-1)
-    {
-        edge currentEdge =input[i];
-        
-        int parent_s=findparent(parent,currentEdge.s);
-        int parent_d=findparent(parent,currentEdge.d);
-        
-        if(parent_s != parent_d)
-        {
-            output[count]=currentEdge;
+
+    findParent(parent, parent[vertex]);
+
+}
+
+void kruskalMST(edge *input, int n, int m) {
+
+    sort(input, input + m, compare);
+
+    int* parent = new int[n];
+
+    for(int i = 0; i < n; i++) {
+
+        parent[i] = i;
+
+    }
+
+    edge* output = new edge[n - 1];
+
+    int count = 0;
+    int i = 0;
+
+    while(count < n - 1) {
+
+        edge currentVertex = input[i];
+        int srcParent = findParent(parent, currentVertex.src);
+        int destParent = findParent(parent, currentVertex.dest);
+
+        if(srcParent != destParent) {
+
+            output[count] = currentVertex;
             count++;
-            
-            parent[parent_s]= parent_d;
+
+            parent[srcParent] = destParent;
+
         }
+
         i++;
-        
+
     }
-    //print
-    for(int i=0 ; i< v-1 ;i++ )
-    {
-        if( output[i].s< output[i].d)
-            cout<<output[i].s<<" "<< output[i].d<<" "<<output[i].w<< endl;
+
+    for(int i = 0; i < n - 1; i++) {
+
+        if(output[i].src < output[i].dest)
+            cout << output[i].src <<" "<< output[i].dest <<" "<< output[i].weight << endl;
         else{
-           cout<<output[i].d<<" "<< output[i].s<<" "<<output[i].w<< endl;
-
+           cout<<output[i].dest <<" " << output[i].src <<" " <<output[i].weight << endl;
         }
-    }
-     delete [] output;
 
-    delete [] parent;
+    }
+
+    delete[] output;
+    delete[] parent;
+
 }
-int main()
-{
-    int V, E;
-    cin >> V >> E;
 
-    // input graph
-    edge *input= new edge[E];
-   for(int i= 0; i<E ;i++)
-    {   int s,d,w;
-        cin>>s>>d>>w;
-        input[i]=edge(s,d,w);
+int main() {
+
+    int n, m;
+    cin >> n >> m;
+
+    edge *input = new edge[m];
+
+    for(int i = 0; i < m; i++) {
+
+        int s, d, w;
+        cin >> s >> d >> w;
+        input[i] = edge(s, d, w);
+
     }
-    
-	
-   kruskalMST(input,V,E);
-    
-     delete [] input;
 
-    return 0;
+    kruskalMST(input, n, m);
+
+    delete[] input;
+
 }
